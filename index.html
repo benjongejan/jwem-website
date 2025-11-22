@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JWEM | Jongejan Well Engineering Management</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Theme Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#0B1120', // Very dark slate
+                        surface: '#151E32',    // Lighter slate for cards
+                        surfaceHighlight: '#1E293B',
+                        primary: {
+                            DEFAULT: '#00E088', // Bright Tech Green
+                            dim: 'rgba(0, 224, 136, 0.1)',
+                            hover: '#00C074'
+                        },
+                        text: {
+                            main: '#F1F5F9',
+                            muted: '#94A3B8'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Oswald', 'sans-serif'],
+                    },
+                    backgroundImage: {
+                        'grid-pattern': "linear-gradient(to right, #1e293b 1px, transparent 1px), linear-gradient(to bottom, #1e293b 1px, transparent 1px)"
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Global Resets & Utilities */
+        body {
+            background-color: #0B1120;
+            color: #F1F5F9;
+            font-family: 'Inter', sans-serif;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Custom Tech Grid Background */
+        .tech-grid {
+            background-size: 40px 40px;
+            mask-image: linear-gradient(to bottom, transparent, 10%, black, 90%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, 5%, black 40%, black 80%, transparent);
+        }
+
+        /* Green Glow Effects */
+        .glow-hover {
+            transition: all 0.3s ease;
+        }
+        .glow-hover:hover {
+            box-shadow: 0 0 15px rgba(0, 224, 136, 0.3);
+            border-color: #00E088;
+        }
+
+        /* Fade Transition */
+        .fade-enter { opacity: 0; transform: translateY(10px); }
+        .fade-enter-active { opacity: 1; transform: translateY(0); transition: opacity 400ms ease-out, transform 400ms ease-out; }
+        
+        /* Navigation Active State */
+        .nav-item.active { color: #00E088; border-bottom-color: #00E088; }
+        
+        /* Image Overlay Gradient */
+        .img-overlay {
+            background: linear-gradient(to top, rgba(11, 17, 32, 0.9) 0%, rgba(11, 17, 32, 0.4) 100%);
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen antialiased selection:bg-primary selection:text-background">
+
+    <!-- HEADER -->
+    <header class="fixed w-full top-0 z-50 bg-background/90 backdrop-blur-md border-b border-white/10">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            
+            <!-- New Geometric Logo -->
+            <div class="flex items-center gap-3 cursor-pointer group" onclick="navigateTo('home')">
+                <div class="relative w-10 h-10 flex items-center justify-center">
+                    <!-- Hexagon Shape using CSS Clip-path -->
+                    <div class="absolute inset-0 bg-primary group-hover:bg-white transition-colors duration-300" style="clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);"></div>
+                    <span class="relative font-heading font-bold text-background text-xl tracking-tighter">JW</span>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-xl font-bold leading-none tracking-wide text-white group-hover:text-primary transition-colors">JWEM</span>
+                    <span class="text-[10px] text-text-muted uppercase tracking-[0.2em] font-medium">Well Engineering</span>
+                </div>
+            </div>
+
+            <!-- Desktop Navigation -->
+            <nav class="hidden md:flex items-center gap-8">
+                <button onclick="navigateTo('home')" id="nav-home" class="nav-item text-sm font-medium uppercase tracking-widest text-text-muted hover:text-white border-b-2 border-transparent py-1 transition-all">Home</button>
+                <button onclick="navigateTo('about')" id="nav-about" class="nav-item text-sm font-medium uppercase tracking-widest text-text-muted hover:text-white border-b-2 border-transparent py-1 transition-all">About</button>
+                
+                <!-- CTA Button -->
+                <button onclick="navigateTo('contact')" class="ml-4 px-6 py-2 bg-transparent border border-primary text-primary hover:bg-primary hover:text-background font-bold uppercase tracking-wider text-xs transition-all duration-300">
+                    Contact Us
+                </button>
+            </nav>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="md:hidden text-white hover:text-primary transition-colors" onclick="toggleMobileMenu()">
+                <i class="fa-solid fa-bars text-2xl"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden bg-surface border-t border-white/10 p-4 absolute w-full">
+            <div class="flex flex-col space-y-4">
+                <button onclick="navigateTo('home'); toggleMobileMenu()" class="text-left text-gray-300 hover:text-primary uppercase text-sm font-bold">Home</button>
+                <button onclick="navigateTo('about'); toggleMobileMenu()" class="text-left text-gray-300 hover:text-primary uppercase text-sm font-bold">About</button>
+                <button onclick="navigateTo('contact'); toggleMobileMenu()" class="text-left text-primary uppercase text-sm font-bold">Contact</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT SPA CONTAINER -->
+    <main id="app-content" class="flex-grow pt-20">
+        
+        <!-- ==================== HOME PAGE ==================== -->
+        <div id="page-home" class="page-section">
+            <!-- Dark Hero Section -->
+            <section class="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-background">
+                <!-- Background Image (Land Rig) -->
+                <div class="absolute inset-0 z-0">
+                    <img src="https://images.unsplash.com/photo-1518332788603-7e678f812b1f?q=80&w=1920&auto=format&fit=crop" 
+                         alt="Modern Land Drilling Rig" 
+                         class="w-full h-full object-cover opacity-40">
+                    <div class="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent"></div>
+                    <div class="absolute inset-0 bg-grid-pattern tech-grid opacity-30"></div>
+                </div>
+                
+                <div class="container mx-auto px-6 relative z-10">
+                    <div class="max-w-4xl">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 border border-primary/30 bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest mb-6 rounded-full backdrop-blur-sm">
+                            <div class="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                            Global Independent Consultancy
+                        </div>
+                        
+                        <h1 class="text-5xl md:text-7xl font-bold text-white leading-tight mb-6">
+                            Precision <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-emerald-600">Well Engineering</span> & Management
+                        </h1>
+                        
+                        <p class="text-lg md:text-xl text-text-muted font-light max-w-2xl leading-relaxed mb-10 border-l-2 border-primary/50 pl-6">
+                            Maximizing performance and safety for <span class="text-white font-medium">geothermal and hydrocarbon</span> projects through rigorous, data-driven technical oversight.
+                        </p>
+                        
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <button onclick="navigateTo('contact')" class="px-8 py-4 bg-primary text-background font-bold uppercase tracking-widest text-sm hover:bg-white hover:scale-105 transition-all duration-300 shadow-[0_0_20px_rgba(0,224,136,0.3)]">
+                                Request Consultation
+                            </button>
+                            <button onclick="navigateTo('about')" class="px-8 py-4 border border-white/20 text-white hover:border-primary hover:text-primary font-bold uppercase tracking-widest text-sm transition-all duration-300 bg-surface/30 backdrop-blur-sm">
+                                Explore Services
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Scroll Indicator -->
+                <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce text-text-muted">
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+            </section>
+
+            <!-- Trust Metrics Bar -->
+            <section class="bg-surface border-y border-white/5 relative z-20">
+                <div class="container mx-auto px-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/10">
+                        <div class="py-8 px-6 flex items-center gap-5 group">
+                            <i class="fa-solid fa-scale-balanced text-3xl text-primary/50 group-hover:text-primary transition-colors"></i>
+                            <div>
+                                <h3 class="text-white text-lg font-medium">Independent</h3>
+                                <p class="text-text-muted text-sm">Unbiased peer reviews</p>
+                            </div>
+                        </div>
+                        <div class="py-8 px-6 flex items-center gap-5 group">
+                            <i class="fa-solid fa-globe text-3xl text-primary/50 group-hover:text-primary transition-colors"></i>
+                            <div>
+                                <h3 class="text-white text-lg font-medium">Global Standards</h3>
+                                <p class="text-text-muted text-sm">Zero-incident focus</p>
+                            </div>
+                        </div>
+                        <div class="py-8 px-6 flex items-center gap-5 group">
+                            <i class="fa-solid fa-timeline text-3xl text-primary/50 group-hover:text-primary transition-colors"></i>
+                            <div>
+                                <h3 class="text-white text-lg font-medium">25+ Years</h3>
+                                <p class="text-text-muted text-sm">Major operator experience</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Operational Experience / Rig Gallery -->
+            <section class="py-20 bg-background relative overflow-hidden">
+                 <div class="container mx-auto px-6">
+                    <div class="mb-12 text-center md:text-left">
+                        <h2 class="text-3xl text-white font-bold mb-2">Operational Environments</h2>
+                        <div class="h-1 w-20 bg-primary md:mx-0 mx-auto"></div>
+                        <p class="text-text-muted mt-4 max-w-2xl">
+                            Extensive hands-on experience across the full spectrum of drilling environments, from onshore fields to ultra-deepwater frontiers.
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <!-- Land Rig -->
+                        <div class="group relative h-80 overflow-hidden rounded-sm border border-white/10">
+                            <img src="https://images.unsplash.com/photo-1605218427368-35b082145279?q=80&w=800&auto=format&fit=crop" 
+                                 class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                                 alt="Land Drilling Rig">
+                            <div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-90"></div>
+                            <div class="absolute bottom-0 left-0 p-6">
+                                <div class="text-primary text-xs font-bold uppercase tracking-widest mb-1">Onshore</div>
+                                <h3 class="text-white text-xl font-heading font-bold">Land Rig</h3>
+                            </div>
+                        </div>
+
+                        <!-- Jack-up -->
+                        <div class="group relative h-80 overflow-hidden rounded-sm border border-white/10">
+                            <img src="https://images.unsplash.com/photo-1569022495519-40a1864cb5df?q=80&w=800&auto=format&fit=crop" 
+                                 class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                                 alt="Jack-up Rig">
+                            <div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-90"></div>
+                            <div class="absolute bottom-0 left-0 p-6">
+                                <div class="text-primary text-xs font-bold uppercase tracking-widest mb-1">Shallow Water</div>
+                                <h3 class="text-white text-xl font-heading font-bold">Jack-up</h3>
+                            </div>
+                        </div>
+
+                        <!-- Semi-Sub -->
+                        <div class="group relative h-80 overflow-hidden rounded-sm border border-white/10">
+                            <img src="https://images.unsplash.com/photo-1611584419653-9626307865d6?q=80&w=800&auto=format&fit=crop" 
+                                 class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                                 alt="Semi-submersible Rig">
+                            <div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-90"></div>
+                            <div class="absolute bottom-0 left-0 p-6">
+                                <div class="text-primary text-xs font-bold uppercase tracking-widest mb-1">Deep Water</div>
+                                <h3 class="text-white text-xl font-heading font-bold">Semi-Submersible</h3>
+                            </div>
+                        </div>
+
+                        <!-- Drillship -->
+                        <div class="group relative h-80 overflow-hidden rounded-sm border border-white/10">
+                            <img src="https://images.unsplash.com/photo-1552759846-690847b2c36f?q=80&w=800&auto=format&fit=crop" 
+                                 class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                                 alt="Drillship">
+                            <div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-90"></div>
+                            <div class="absolute bottom-0 left-0 p-6">
+                                <div class="text-primary text-xs font-bold uppercase tracking-widest mb-1">Ultra-Deep Water</div>
+                                <h3 class="text-white text-xl font-heading font-bold">Drillship</h3>
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+            </section>
+
+            <!-- Services Section -->
+            <section class="py-24 bg-surfaceHighlight relative">
+                <div class="container mx-auto px-6">
+                    <div class="flex flex-col md:flex-row justify-between items-end mb-16">
+                        <div>
+                            <h2 class="text-4xl text-white font-bold mb-2">Technical Competencies</h2>
+                            <div class="h-1 w-20 bg-primary"></div>
+                        </div>
+                        <p class="text-text-muted max-w-md text-right mt-4 md:mt-0">
+                            Comprehensive engineering solutions tailored for the complexities of modern energy extraction.
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Service Card 1 -->
+                        <div class="bg-background border border-white/5 p-8 group hover:border-primary/50 transition-all duration-300 hover:-translate-y-1">
+                            <div class="w-12 h-12 bg-primary/10 flex items-center justify-center text-primary text-xl mb-6 rounded-sm group-hover:bg-primary group-hover:text-background transition-colors">
+                                <i class="fa-solid fa-chart-line"></i>
+                            </div>
+                            <h3 class="text-xl text-white font-bold mb-3">Performance Validation</h3>
+                            <p class="text-text-muted text-sm leading-relaxed mb-6">
+                                Advanced data analytics to benchmark well designs against theoretical models and real-world operational constraints.
+                            </p>
+                            <span class="text-primary text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                                View Details <i class="fa-solid fa-arrow-right transition-transform group-hover:translate-x-2"></i>
+                            </span>
+                        </div>
+
+                        <!-- Service Card 2 -->
+                        <div class="bg-background border border-white/5 p-8 group hover:border-primary/50 transition-all duration-300 hover:-translate-y-1">
+                            <div class="w-12 h-12 bg-primary/10 flex items-center justify-center text-primary text-xl mb-6 rounded-sm group-hover:bg-primary group-hover:text-background transition-colors">
+                                <i class="fa-solid fa-clipboard-check"></i>
+                            </div>
+                            <h3 class="text-xl text-white font-bold mb-3">Operational Audits</h3>
+                            <p class="text-text-muted text-sm leading-relaxed mb-6">
+                                Forensic operational reviews to extract lessons learned, identify gaps, and prevent recurrence of costly failures.
+                            </p>
+                            <span class="text-primary text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                                View Details <i class="fa-solid fa-arrow-right transition-transform group-hover:translate-x-2"></i>
+                            </span>
+                        </div>
+
+                        <!-- Service Card 3 -->
+                        <div class="bg-background border border-white/5 p-8 group hover:border-primary/50 transition-all duration-300 hover:-translate-y-1">
+                            <div class="w-12 h-12 bg-primary/10 flex items-center justify-center text-primary text-xl mb-6 rounded-sm group-hover:bg-primary group-hover:text-background transition-colors">
+                                <i class="fa-solid fa-glasses"></i>
+                            </div>
+                            <h3 class="text-xl text-white font-bold mb-3">Independent Peer Reviews</h3>
+                            <p class="text-text-muted text-sm leading-relaxed mb-6">
+                                Unbiased third-party assessments of well engineering plans to ensure technical integrity and regulatory compliance.
+                            </p>
+                            <span class="text-primary text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                                View Details <i class="fa-solid fa-arrow-right transition-transform group-hover:translate-x-2"></i>
+                            </span>
+                        </div>
+
+                        <!-- Service Card 4 -->
+                        <div class="bg-background border border-white/5 p-8 group hover:border-primary/50 transition-all duration-300 hover:-translate-y-1">
+                            <div class="w-12 h-12 bg-primary/10 flex items-center justify-center text-primary text-xl mb-6 rounded-sm group-hover:bg-primary group-hover:text-background transition-colors">
+                                <i class="fa-solid fa-diagram-project"></i>
+                            </div>
+                            <h3 class="text-xl text-white font-bold mb-3">Project Management</h3>
+                            <p class="text-text-muted text-sm leading-relaxed mb-6">
+                                End-to-end planning and execution for complex hydrocarbon and deep geothermal well operations.
+                            </p>
+                            <span class="text-primary text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                                View Details <i class="fa-solid fa-arrow-right transition-transform group-hover:translate-x-2"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CTA Strip -->
+            <section class="py-20 bg-surface relative overflow-hidden border-t border-white/5">
+                <div class="absolute right-0 top-0 w-1/3 h-full bg-primary/5 skew-x-12"></div>
+                <div class="container mx-auto px-6 relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                    <div>
+                        <h2 class="text-3xl font-bold text-white mb-2">Ready to Optimize?</h2>
+                        <p class="text-text-muted">Schedule a preliminary technical discussion.</p>
+                    </div>
+                    <button onclick="navigateTo('contact')" class="px-8 py-4 bg-transparent border border-primary text-primary hover:bg-primary hover:text-background font-bold uppercase tracking-widest text-sm transition-all">
+                        Initiate Inquiry
+                    </button>
+                </div>
+            </section>
+        </div>
+
+        <!-- ==================== ABOUT PAGE ==================== -->
+        <div id="page-about" class="page-section hidden">
+            <!-- Header -->
+            <section class="bg-surface pt-32 pb-16 border-b border-white/5">
+                <div class="container mx-auto px-6">
+                    <p class="text-primary font-bold tracking-[0.2em] uppercase text-sm mb-4">Company Profile</p>
+                    <h1 class="text-4xl md:text-6xl font-bold text-white">Defining Excellence</h1>
+                </div>
+            </section>
+
+            <section class="py-20">
+                <div class="container mx-auto px-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+                        <!-- Content -->
+                        <div>
+                            <h2 class="text-2xl text-white font-bold mb-6">Mission Statement</h2>
+                            <p class="text-text-muted text-lg leading-relaxed mb-8">
+                                Jongejan Well Engineering Management BV (JWEM) was founded to bring a wealth of independent expertise and technical rigor to the global hydrocarbon and geothermal industries.
+                            </p>
+                            <p class="text-text-muted leading-relaxed mb-10">
+                                Our mission is to transform complex well challenges into efficient, safe, and successful operations by providing unbiased, data-driven management. In an industry where precision is paramount, JWEM stands as a pillar of reliability.
+                            </p>
+
+                            <h3 class="text-white text-xl font-bold mb-6 flex items-center gap-3">
+                                <span class="w-8 h-[2px] bg-primary"></span> Core Values
+                            </h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div class="bg-surface p-6 border-l-2 border-primary">
+                                    <h4 class="text-white font-bold uppercase text-sm mb-2">Integrity</h4>
+                                    <p class="text-text-muted text-sm">Uncompromising honesty in all audits.</p>
+                                </div>
+                                <div class="bg-surface p-6 border-l-2 border-primary">
+                                    <h4 class="text-white font-bold uppercase text-sm mb-2">Safety First</h4>
+                                    <p class="text-text-muted text-sm">Commitment to zero incidents.</p>
+                                </div>
+                                <div class="bg-surface p-6 border-l-2 border-primary">
+                                    <h4 class="text-white font-bold uppercase text-sm mb-2">Precision</h4>
+                                    <p class="text-text-muted text-sm">Data-driven, rigorous solutions.</p>
+                                </div>
+                                <div class="bg-surface p-6 border-l-2 border-primary">
+                                    <h4 class="text-white font-bold uppercase text-sm mb-2">Innovation</h4>
+                                    <p class="text-text-muted text-sm">Embracing new energy technologies.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Profile -->
+                        <div class="relative">
+                            <div class="absolute inset-0 bg-primary/20 translate-x-4 translate-y-4 border border-primary/30"></div>
+                            <div class="relative bg-surface border border-white/10 p-8 md:p-12 h-full">
+                                <div class="flex items-center gap-6 mb-8">
+                                    <div class="w-20 h-20 bg-background rounded-full flex items-center justify-center border-2 border-primary">
+                                        <i class="fa-solid fa-user text-primary text-3xl"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-2xl font-bold text-white">Arthur Jongejan</h3>
+                                        <p class="text-primary text-sm font-bold uppercase tracking-widest">Founder & Lead Consultant</p>
+                                    </div>
+                                </div>
+                                <p class="text-text-muted mb-6 leading-relaxed">
+                                    Arthur Jongejan brings over 25 years of experience at high-tier <strong class="text-white">geothermal and oil and gas</strong> companies globally. His career is defined by operational excellence and the successful management of complex drilling campaigns.
+                                </p>
+                                <p class="text-text-muted leading-relaxed mb-8">
+                                    Currently based in The Hague, Arthur leverages deep industry knowledge to support clients in transitioning to sustainable geothermal energy while optimizing traditional assets.
+                                </p>
+                                <a href="mailto:arthurjongejan@hotmail.com" class="inline-flex items-center text-white hover:text-primary font-bold uppercase text-sm tracking-widest transition-colors">
+                                    Contact Arthur <i class="fa-solid fa-arrow-right ml-2"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ==================== CONTACT PAGE ==================== -->
+        <div id="page-contact" class="page-section hidden">
+            <section class="bg-surface pt-32 pb-16 border-b border-white/5">
+                <div class="container mx-auto px-6">
+                    <p class="text-primary font-bold tracking-[0.2em] uppercase text-sm mb-4">Get in touch</p>
+                    <h1 class="text-4xl md:text-6xl font-bold text-white">Project Inquiry</h1>
+                </div>
+            </section>
+
+            <section class="py-20">
+                <div class="container mx-auto px-6">
+                    <div class="flex flex-col lg:flex-row gap-12 bg-surface border border-white/5">
+                        
+                        <!-- Form -->
+                        <div class="w-full lg:w-2/3 p-8 md:p-16">
+                            <form onsubmit="event.preventDefault(); alert('Message Sent!');" class="space-y-8">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div class="group">
+                                        <label class="block text-xs font-bold text-primary uppercase tracking-widest mb-3">Name</label>
+                                        <input type="text" class="w-full bg-background border border-white/10 text-white p-4 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="Full Name">
+                                    </div>
+                                    <div class="group">
+                                        <label class="block text-xs font-bold text-primary uppercase tracking-widest mb-3">Company</label>
+                                        <input type="text" class="w-full bg-background border border-white/10 text-white p-4 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="Organization">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-primary uppercase tracking-widest mb-3">Email</label>
+                                    <input type="email" class="w-full bg-background border border-white/10 text-white p-4 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="email@address.com">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-primary uppercase tracking-widest mb-3">Message</label>
+                                    <textarea rows="5" class="w-full bg-background border border-white/10 text-white p-4 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="Describe your project requirements..."></textarea>
+                                </div>
+                                <button type="submit" class="w-full md:w-auto px-10 py-4 bg-primary text-background font-bold uppercase tracking-widest hover:bg-white hover:scale-105 transition-all duration-300">
+                                    Send Inquiry
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Info Sidebar -->
+                        <div class="w-full lg:w-1/3 bg-surfaceHighlight p-8 md:p-16 border-l border-white/5 flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-white font-bold text-xl mb-8">Contact Details</h3>
+                                
+                                <div class="space-y-8">
+                                    <div class="flex items-start gap-4">
+                                        <i class="fa-solid fa-envelope text-primary mt-1"></i>
+                                        <div>
+                                            <span class="block text-xs font-bold text-text-muted uppercase mb-1">Email</span>
+                                            <a href="mailto:arthurjongejan@hotmail.com" class="text-white hover:text-primary transition-colors">arthurjongejan@hotmail.com</a>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start gap-4">
+                                        <i class="fa-solid fa-location-dot text-primary mt-1"></i>
+                                        <div>
+                                            <span class="block text-xs font-bold text-text-muted uppercase mb-1">Headquarters</span>
+                                            <span class="text-white">The Hague, Netherlands</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-12 p-6 bg-background border border-white/5 text-center">
+                                <i class="fa-solid fa-map-location-dot text-3xl text-text-muted mb-3"></i>
+                                <p class="text-xs text-text-muted uppercase tracking-widest">Serving Clients Globally</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-background border-t border-white/10 pt-16 pb-8">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-start gap-12 mb-12">
+                <div class="max-w-sm">
+                    <div class="flex items-center gap-2 mb-6">
+                        <!-- Small Logo Footer -->
+                        <div class="w-6 h-6 bg-primary flex items-center justify-center" style="clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);">
+                            <span class="text-[10px] font-bold text-background">J</span>
+                        </div>
+                        <span class="text-xl font-bold text-white tracking-wide">JWEM</span>
+                    </div>
+                    <p class="text-text-muted text-sm leading-relaxed">
+                        Independent Well Engineering and Project Management Consultancy tailored for the high-stakes demands of Geothermal and Hydrocarbon sectors.
+                    </p>
+                </div>
+                
+                <div class="flex gap-16">
+                    <div>
+                        <h4 class="text-white font-bold uppercase text-xs tracking-widest mb-6">Navigation</h4>
+                        <ul class="space-y-3 text-sm text-text-muted">
+                            <li><button onclick="navigateTo('home')" class="hover:text-primary transition-colors">Home</button></li>
+                            <li><button onclick="navigateTo('about')" class="hover:text-primary transition-colors">About</button></li>
+                            <li><button onclick="navigateTo('contact')" class="hover:text-primary transition-colors">Contact</button></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-white font-bold uppercase text-xs tracking-widest mb-6">Legal</h4>
+                        <ul class="space-y-3 text-sm text-text-muted">
+                            <li><a href="#" class="hover:text-primary transition-colors">Privacy Policy</a></li>
+                            <li><a href="#" class="hover:text-primary transition-colors">Terms of Service</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-text-muted text-xs">&copy; 2024 Jongejan Well Engineering Management BV. All Rights Reserved.</p>
+                <div class="flex gap-4">
+                    <a href="#" class="text-text-muted hover:text-primary transition-colors"><i class="fa-brands fa-linkedin text-lg"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Router Script -->
+    <script>
+        function navigateTo(pageId) {
+            // 1. Hide all pages
+            document.querySelectorAll('.page-section').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('fade-enter-active');
+            });
+
+            // 2. Show target page
+            const target = document.getElementById('page-' + pageId);
+            if(target) {
+                target.classList.remove('hidden');
+                setTimeout(() => {
+                    target.classList.add('fade-enter-active');
+                }, 10);
+                window.scrollTo(0, 0);
+            }
+
+            // 3. Update Navigation State
+            document.querySelectorAll('.nav-item').forEach(btn => {
+                btn.classList.remove('active');
+                btn.classList.remove('text-white', 'border-primary');
+                btn.classList.add('text-text-muted', 'border-transparent');
+            });
+
+            const activeBtn = document.getElementById('nav-' + pageId);
+            if(activeBtn) {
+                activeBtn.classList.add('active', 'text-white', 'border-primary');
+                activeBtn.classList.remove('text-text-muted', 'border-transparent');
+            }
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        }
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => navigateTo('home'));
+    </script>
+</body>
+</html>
